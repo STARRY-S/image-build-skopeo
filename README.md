@@ -6,6 +6,8 @@ Build [skopeo](https://github.com/containers/skopeo) in SUSE [SLE Base Container
 
 Create a tag representing to the skopeo version, then the Drone CI will build the docker image.
 
+The built `hardened-skopeo` docker image is available at [cnrancher/hardened-skopeo](https://hub.docker.com/r/cnrancher/hardened-skopeo).
+
 ---
 
 Build docker image manually:
