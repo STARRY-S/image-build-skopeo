@@ -1,0 +1,120 @@
+---
+kind: pipeline
+type: docker
+name: ci-pipeline-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: docker-build-amd64
+  pull: default
+  image: rancher/dapper:v0.6.0
+  environment:
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    REGISTRY: "docker.io/cnrancher"
+    SKOPEO_VERSION: ${DRONE_TAG}
+    DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
+  commands:
+    - ./scripts/docker.sh
+  volumes:
+    - name: docker
+      path: /var/run/docker.sock
+  when:
+    event:
+    - tag
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+
+node:
+  instance: agent-amd64
+
+---
+kind: pipeline
+name: ci-pipeline-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: docker-build-arm64
+  pull: default
+  image: rancher/dapper:v0.6.0
+  environment:
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    REGISTRY: "docker.io/cnrancher"
+    SKOPEO_VERSION: ${DRONE_TAG}
+    DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
+  commands:
+    - ./scripts/docker.sh
+  volumes:
+    - name: docker
+      path: /var/run/docker.sock
+  when:
+    event:
+    - tag
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+
+node:
+  instance: agent-arm64
+
+---
+
+kind: pipeline
+name: ci-manifest-amd64
+
+clone:
+  disable: true
+
+steps:
+- name: clone
+  image: alpine/git
+  commands:
+  - git clone $DRONE_GIT_HTTP_URL .
+  - git checkout $DRONE_COMMIT
+- name: docker-publish-manifest
+  pull: default
+  image: rancher/dapper:v0.6.0
+  environment:
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    REGISTRY: "docker.io/cnrancher"
+    SKOPEO_VERSION: ${DRONE_TAG}
+    DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
+  commands:
+    - ./scripts/docker-manifest.sh
+  volumes:
+    - name: docker
+      path: /var/run/docker.sock
+  when:
+    event:
+    - tag
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+
+depends_on:
+  - ci-pipeline-amd64
+  - ci-pipeline-arm64
+
+node:
+  instance: agent-amd64
