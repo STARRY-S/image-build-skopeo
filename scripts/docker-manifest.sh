@@ -38,9 +38,7 @@ echo "${DOCKER_PASSWORD}" | docker login \
     --username ${DOCKER_USERNAME} \
     --password-stdin
 
-source ${WORKINGDIR}/scripts/env.sh
-
-export TAG=${TAG:-"hangar"}
+export TAG=${TAG:-"hardened-skopeo"}
 export REGISTRY=${REGISTRY:-"docker.io/cnrancher"}
 export SKOPEO_VERSION=${SKOPEO_VERSION}
 echo "version: ${SKOPEO_VERSION}"

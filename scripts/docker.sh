@@ -15,7 +15,7 @@ echo "${DOCKER_PASSWORD}" | docker login \
     --password-stdin
 
 export TAG=${TAG:="hardened-skopeo"}
-export REGISTRY=${REGISTRY:-"docker.io/hxstarrys"}
+export REGISTRY=${REGISTRY:-"docker.io/cnrancher"}
 export SKOPEO_VERSION=${SKOPEO_VERSION}
 echo "SKOPEO_VERSION: ${SKOPEO_VERSION}"
 echo "TAG: ${TAG}:${SKOPEO_VERSION}"

@@ -20,7 +20,7 @@ steps:
     SKOPEO_VERSION: ${DRONE_TAG}
     DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
   commands:
-    - ./scripts/docker.sh
+    - dapper scripts/docker.sh
   volumes:
     - name: docker
       path: /var/run/docker.sock
@@ -57,7 +57,7 @@ steps:
     SKOPEO_VERSION: ${DRONE_TAG}
     DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
   commands:
-    - ./scripts/docker.sh
+    - dapper scripts/docker.sh
   volumes:
     - name: docker
       path: /var/run/docker.sock
@@ -85,8 +85,11 @@ steps:
 - name: clone
   image: alpine/git
   commands:
-  - git clone $DRONE_GIT_HTTP_URL .
-  - git checkout $DRONE_COMMIT
+    - git clone $DRONE_GIT_HTTP_URL .
+    - git checkout $DRONE_COMMIT
+  when:
+    event:
+    - tag
 - name: docker-publish-manifest
   pull: default
   image: rancher/dapper:v0.6.0
@@ -99,7 +102,7 @@ steps:
     SKOPEO_VERSION: ${DRONE_TAG}
     DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA}
   commands:
-    - ./scripts/docker-manifest.sh
+    - dapper scripts/docker-manifest.sh
   volumes:
     - name: docker
       path: /var/run/docker.sock
