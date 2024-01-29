@@ -9,7 +9,6 @@ platform:
 
 steps:
 - name: docker-build-amd64
-  pull: default
   image: rancher/dapper:v0.6.0
   environment:
     DOCKER_USERNAME:
@@ -38,6 +37,7 @@ node:
 
 ---
 kind: pipeline
+type: docker
 name: ci-pipeline-arm64
 
 platform:
@@ -46,7 +46,6 @@ platform:
 
 steps:
 - name: docker-build-arm64
-  pull: default
   image: rancher/dapper:v0.6.0
   environment:
     DOCKER_USERNAME:
@@ -76,6 +75,7 @@ node:
 ---
 
 kind: pipeline
+type: docker
 name: ci-manifest-amd64
 
 clone:
@@ -91,7 +91,6 @@ steps:
     event:
     - tag
 - name: docker-publish-manifest
-  pull: default
   image: rancher/dapper:v0.6.0
   environment:
     DOCKER_USERNAME:
