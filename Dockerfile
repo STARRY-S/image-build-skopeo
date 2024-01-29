@@ -1,4 +1,4 @@
-FROM registry.suse.com/bci/golang:1.19
+FROM registry.suse.com/bci/golang:1.21 as builder
 
 RUN zypper up -y && \
     zypper in -y -f git libgpgme-devel device-mapper-devel libbtrfs-devel \
@@ -23,5 +23,13 @@ RUN rm -r $GOPATH/src/github.com && \
     zypper rm -y libgpgme-devel device-mapper-devel libbtrfs-devel \
         glib2-devel wget gzip tar && \
     zypper clean
+
+FROM registry.suse.com/bci/bci-base:15.5
+COPY --from=builder /usr/local/bin/skopeo /usr/bin/
+
+RUN zypper up -y && \
+    zypper in -y -f libbtrfs-devel libdevmapper1_03 && \
+    zypper clean && \
+    skopeo -v
 
 ENTRYPOINT ["skopeo"]
